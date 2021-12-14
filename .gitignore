@@ -13,3 +13,4 @@ Manifest.bat
 obj
 x32*
 x64*
+/packages

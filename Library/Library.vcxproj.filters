@@ -17,6 +17,9 @@
     <Filter Include="taglib">
       <UniqueIdentifier>{fe354ece-06ea-4af8-9129-f0fcb7e31d0c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="WebView">
+      <UniqueIdentifier>{b1188b1a-7bd3-40bc-a394-183643413e38}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lua\LuaScript.cpp">
@@ -138,6 +141,16 @@
     <ClCompile Include="DialogNewSkin.cpp" />
     <ClCompile Include="GeneralImage.cpp" />
     <ClCompile Include="ImageCache.cpp" />
+    <ClCompile Include="WebView\HostObjectRmAPI\HostObjectRmAPI.cpp">
+      <Filter>WebView</Filter>
+    </ClCompile>
+    <ClCompile Include="WebView\HostObjectMeter\HostObjectMeter.cpp">
+      <Filter>WebView</Filter>
+    </ClCompile>
+    <ClCompile Include="WebView\HostObjectMeasure\HostObjectMeasure.cpp">
+      <Filter>WebView</Filter>
+    </ClCompile>
+    <ClCompile Include="MeterWebView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lua\LuaScript.h">
@@ -245,6 +258,19 @@
     <ClInclude Include="GeneralImage.h" />
     <ClInclude Include="ImageCache.h" />
     <ClInclude Include="ImageOptions.h" />
+    <ClInclude Include="WebView\webview.h">
+      <Filter>WebView</Filter>
+    </ClInclude>
+    <ClInclude Include="WebView\HostObjectRmAPI\HostObjectRmAPI.h">
+      <Filter>WebView</Filter>
+    </ClInclude>
+    <ClInclude Include="WebView\HostObjectMeter\HostObjectMeter.h">
+      <Filter>WebView</Filter>
+    </ClInclude>
+    <ClInclude Include="WebView\HostObjectMeasure\HostObjectMeasure.h">
+      <Filter>WebView</Filter>
+    </ClInclude>
+    <ClInclude Include="MeterWebView.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Library.rc">
@@ -253,5 +279,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Exports.def" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="WebView\HostObject.idl">
+      <Filter>WebView</Filter>
+    </Midl>
   </ItemGroup>
 </Project>
