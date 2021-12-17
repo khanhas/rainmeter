@@ -105,7 +105,7 @@ void MeterWebView::BindMeasures(ConfigParser &parser, const WCHAR *section)
 
 bool MeterWebView::Draw(Gfx::Canvas &canvas)
 {
-	//UpdateWebViewWindow();
+	UpdateWebViewWindow();
 	return Meter::Draw(canvas);
 }
 
@@ -269,5 +269,14 @@ void MeterWebView::UpdateWebViewWindow()
 
 	controller->SetBoundsAndZoomFactor(bounds, zoomFactor);
 
-	controller->put_IsVisible(!m_Hidden);
+	if (m_Hidden)
+	{
+		ShowWindow(hwnd, SW_HIDE);
+		controller->put_IsVisible(false);
+	}
+	else
+	{
+		ShowWindow(hwnd, SW_SHOWNOACTIVATE);
+		controller->put_IsVisible(true);
+	}
 }
