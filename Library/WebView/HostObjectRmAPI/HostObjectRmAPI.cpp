@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "Logger.h"
 #include "HostObjectRmAPI.h"
+#include "Rainmeter.h"
 
 HostObjectRmAPI::HostObjectRmAPI(MeterWebView *mwv) : parent(mwv), skin(parent->GetSkin()) {}
 
@@ -68,6 +69,79 @@ STDMETHODIMP HostObjectRmAPI::Log(BSTR stringParameter)
 {
 	std::wstring message(stringParameter);
 	RmLog(parent, (int)Logger::Level::Notice, message.c_str());
+
+	return S_OK;
+}
+
+STDMETHODIMP HostObjectRmAPI::ForwardEvent(BSTR eventType, int which, int x, int y)
+{
+	constexpr auto LEFT_MOUSE = 1;
+	constexpr auto MIDDLE_MOUSE = 2;
+	constexpr auto RIGHT_MOUSE = 3;
+	constexpr auto X1_MOUSE = 4;
+	constexpr auto X2_MOUSE = 5;
+	#define EXECUTE_ACTION(type) { auto &cmd = parent->GetMouse().Get##type##Action(); if (!cmd.empty()) { GetRainmeter().ExecuteActionCommand(cmd.c_str(), parent); } }
+
+	auto hwnd = skin->GetWindow();
+	std::wstring type(eventType);
+	LPARAM lParam = MAKELPARAM(x + parent->GetX(), y + parent->GetY());
+	WPARAM wParam = 0;
+
+	if (type == L"drag")
+	{
+		ReleaseCapture();
+		SendMessage(hwnd, WM_NCLBUTTONDOWN, (WPARAM)HTCAPTION, lParam);
+	}
+	else if (type == L"mouseup")
+	{
+		switch (which)
+		{
+			case LEFT_MOUSE: EXECUTE_ACTION(LeftUp); break;
+			case MIDDLE_MOUSE: EXECUTE_ACTION(MiddleUp); break;
+			case RIGHT_MOUSE:
+				SendMessage(hwnd, WM_RBUTTONUP, wParam, lParam);
+				break;
+			case X1_MOUSE: EXECUTE_ACTION(X1Up); break;
+			case X2_MOUSE: EXECUTE_ACTION(X2Up); break;
+		}
+	}
+	else if (type == L"mousedown")
+	{
+		switch (which)
+		{
+			case LEFT_MOUSE: EXECUTE_ACTION(LeftDown); break;
+			case MIDDLE_MOUSE: EXECUTE_ACTION(MiddleDown); break;
+			case RIGHT_MOUSE: EXECUTE_ACTION(RightDown); break;
+			case X1_MOUSE: EXECUTE_ACTION(X1Down); break;
+			case X2_MOUSE: EXECUTE_ACTION(X2Down); break;
+		}
+	}
+	else if (type == L"dblclick")
+	{
+		switch (which)
+		{
+			case LEFT_MOUSE: EXECUTE_ACTION(LeftDoubleClick); break;
+			case MIDDLE_MOUSE: EXECUTE_ACTION(MiddleDoubleClick); break;
+			case RIGHT_MOUSE: EXECUTE_ACTION(RightDoubleClick); break;
+			case X1_MOUSE: EXECUTE_ACTION(X1DoubleClick); break;
+			case X2_MOUSE: EXECUTE_ACTION(X2DoubleClick); break;
+		}
+	}
+	else if (type == L"mouseenter")
+	{
+		EXECUTE_ACTION(Over)
+	}
+	else if (type == L"mouseleave")
+	{
+		EXECUTE_ACTION(Leave)
+	}
+	else if (type == L"mousewheel")
+	{
+		if (y < 0) EXECUTE_ACTION(MouseScrollUp)
+		else if (y > 0) EXECUTE_ACTION(MouseScrollDown)
+		else if (x < 0) EXECUTE_ACTION(MouseScrollLeft)
+		else if (x > 0) EXECUTE_ACTION(MouseScrollRight)
+	}
 
 	return S_OK;
 }

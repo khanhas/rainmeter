@@ -180,10 +180,44 @@ HRESULT MeterWebView::CreateControllerHandler(HRESULT result, ICoreWebView2Contr
 	view->AddScriptToExecuteOnDocumentCreated(
 		LR"(
 RainmeterAPI = chrome.webview.hostObjects.sync.RainmeterAPI;
-document.addEventListener('contextmenu', (event) => {
-	if (event.ctrlKey) return;
-	let mousePos = { type: 'contextmenu', x: event.screenX, y: event.screenY };
-	window.chrome.webview.postMessage(mousePos);
+window.addEventListener('DOMContentLoaded', () => {
+	const downAndMoveHandler = () => RainmeterAPI.forwardEvent("drag", 1, 0, 0);
+
+	let lastDownEvent = {};
+	document.addEventListener("mousedown", (event) => {
+		document.addEventListener("mousemove", downAndMoveHandler);
+		if (event.which == 1 && event.target.tagName == "BUTTON") return;
+
+		const { type, which, clientX, clientY } = event;
+		const timestamp = (new Date()).getTime();
+
+
+		if (which == lastDownEvent.which &&
+			(timestamp - lastDownEvent.timestamp) < 500) {
+			RainmeterAPI.forwardEvent("dblclick", which, clientX, clientY);
+			return;
+		}
+
+		lastDownEvent = { which, timestamp };
+
+		RainmeterAPI.forwardEvent(type, which, clientX, clientY);
+	});
+
+	document.addEventListener("mouseup", (event) => {
+		document.removeEventListener("mousemove", downAndMoveHandler);
+		if (event.which == 1 && event.target.tagName == "BUTTON") return;
+		RainmeterAPI.forwardEvent(event.type, event.which, event.clientX, event.clientY);
+	});
+
+	document.addEventListener("contextmenu", (event) => {
+		if (event.shiftKey) return; // Using default WebView2 context menu
+		
+		event.preventDefault();
+	});
+
+	document.addEventListener("mouseenter", (event) => RainmeterAPI.forwardEvent(event.type, 0, 0, 0));
+	document.addEventListener("mouseleave", (event) => RainmeterAPI.forwardEvent(event.type, 0, 0, 0));
+	document.addEventListener("mousewheel", (event) => RainmeterAPI.forwardEvent(event.type, 0, event.deltaX, event.deltaY));
 });
 		)",
 		nullptr);
