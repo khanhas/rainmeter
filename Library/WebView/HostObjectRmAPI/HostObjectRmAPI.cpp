@@ -73,7 +73,7 @@ STDMETHODIMP HostObjectRmAPI::Log(BSTR stringParameter)
 	return S_OK;
 }
 
-STDMETHODIMP HostObjectRmAPI::ForwardEvent(BSTR eventType, int which, int x, int y)
+STDMETHODIMP HostObjectRmAPI::ForwardEvent(BSTR eventType, int which, int x, int y, int modifiers = 0)
 {
 	constexpr auto LEFT_MOUSE = 1;
 	constexpr auto MIDDLE_MOUSE = 2;
@@ -87,6 +87,10 @@ STDMETHODIMP HostObjectRmAPI::ForwardEvent(BSTR eventType, int which, int x, int
 	LPARAM lParam = MAKELPARAM(x + parent->GetX(), y + parent->GetY());
 	WPARAM wParam = 0;
 
+	bool ctrlKey = (modifiers & 0x01) != 0;
+	bool altKey = (modifiers & 0x02) != 0;
+	bool shiftKey = (modifiers & 0x04) != 0;
+
 	if (type == L"drag")
 	{
 		ReleaseCapture();
@@ -99,7 +103,10 @@ STDMETHODIMP HostObjectRmAPI::ForwardEvent(BSTR eventType, int which, int x, int
 			case LEFT_MOUSE: EXECUTE_ACTION(LeftUp); break;
 			case MIDDLE_MOUSE: EXECUTE_ACTION(MiddleUp); break;
 			case RIGHT_MOUSE:
-				SendMessage(hwnd, WM_RBUTTONUP, wParam, lParam);
+				if (!shiftKey)
+				{
+					SendMessage(hwnd, WM_RBUTTONUP, wParam, lParam);
+				}
 				break;
 			case X1_MOUSE: EXECUTE_ACTION(X1Up); break;
 			case X2_MOUSE: EXECUTE_ACTION(X2Up); break;

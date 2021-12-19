@@ -71,7 +71,7 @@ library PluginWebViewLibrary
 		HRESULT GetVariable([in] BSTR stringParameter, [out, retval] BSTR* stringResult);
 		HRESULT Bang([in] BSTR stringParameter);
 		HRESULT Log([in] BSTR stringParameter);
-		HRESULT ForwardEvent([in] BSTR eventType, [in] int which, [in] int x, [in] int y);
+		HRESULT ForwardEvent([in] BSTR eventType, [in] int which, [in] int x, [in] int y, [ in, defaultvalue(0) ] int modifiers);
 	};
 	//! [HostObjectRmAPIInterface]
 

@@ -206,7 +206,9 @@ window.addEventListener('DOMContentLoaded', () => {
 	document.addEventListener("mouseup", (event) => {
 		document.removeEventListener("mousemove", downAndMoveHandler);
 		if (event.which == 1 && event.target.tagName == "BUTTON") return;
-		RainmeterAPI.forwardEvent(event.type, event.which, event.clientX, event.clientY);
+
+		const modifiers = event.ctrlKey | event.altKey << 1 | event.shiftKey << 2;
+		RainmeterAPI.forwardEvent(event.type, event.which, event.clientX, event.clientY, modifiers);
 	});
 
 	document.addEventListener("contextmenu", (event) => {

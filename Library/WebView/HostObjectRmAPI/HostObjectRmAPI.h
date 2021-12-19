@@ -18,7 +18,7 @@ public:
 	STDMETHODIMP GetVariable(BSTR stringParameter, BSTR *stringResult) override;
 	STDMETHODIMP Bang(BSTR stringParameter) override;
 	STDMETHODIMP Log(BSTR stringParameter) override;
-	STDMETHODIMP ForwardEvent(BSTR eventType, int which, int x, int y) override;
+	STDMETHODIMP ForwardEvent(BSTR eventType, int which, int x, int y, int modifiers) override;
 
 	// Properties
 
