@@ -84,7 +84,7 @@ STDMETHODIMP HostObjectRmAPI::ForwardEvent(BSTR eventType, int which, int x, int
 
 	auto hwnd = skin->GetWindow();
 	std::wstring type(eventType);
-	LPARAM lParam = MAKELPARAM(x + parent->GetX(), y + parent->GetY());
+	LPARAM lParam = MAKELPARAM(x - skin->GetX() + parent->GetX(), y - skin->GetY() + parent->GetY());
 	WPARAM wParam = 0;
 
 	bool ctrlKey = (modifiers & 0x01) != 0;

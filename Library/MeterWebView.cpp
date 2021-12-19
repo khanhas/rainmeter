@@ -188,19 +188,19 @@ window.addEventListener('DOMContentLoaded', () => {
 		document.addEventListener("mousemove", downAndMoveHandler);
 		if (event.which == 1 && event.target.tagName == "BUTTON") return;
 
-		const { type, which, clientX, clientY } = event;
+		const { type, which, screenX, screenY } = event;
 		const timestamp = (new Date()).getTime();
 
 
 		if (which == lastDownEvent.which &&
 			(timestamp - lastDownEvent.timestamp) < 500) {
-			RainmeterAPI.forwardEvent("dblclick", which, clientX, clientY);
+			RainmeterAPI.forwardEvent("dblclick", which, screenX, screenY);
 			return;
 		}
 
 		lastDownEvent = { which, timestamp };
 
-		RainmeterAPI.forwardEvent(type, which, clientX, clientY);
+		RainmeterAPI.forwardEvent(type, which, screenX, screenY);
 	});
 
 	document.addEventListener("mouseup", (event) => {
@@ -208,7 +208,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		if (event.which == 1 && event.target.tagName == "BUTTON") return;
 
 		const modifiers = event.ctrlKey | event.altKey << 1 | event.shiftKey << 2;
-		RainmeterAPI.forwardEvent(event.type, event.which, event.clientX, event.clientY, modifiers);
+		RainmeterAPI.forwardEvent(event.type, event.which, event.screenX, event.screenY, modifiers);
 	});
 
 	document.addEventListener("contextmenu", (event) => {
